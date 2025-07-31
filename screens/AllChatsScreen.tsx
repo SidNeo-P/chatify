@@ -238,74 +238,276 @@
 //   },
 // });
 
-import React from "react";
+
+
+
+
+
+// import React from "react";
+// import {
+//   View,
+//   Text,
+//   FlatList,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Image,
+//   SafeAreaView,
+// } from "react-native";
+// import { useNavigation } from "@react-navigation/native";
+
+// // Dummy data to match the design in the image
+// const DUMMY_CHATS = [
+//   {
+//     id: "1",
+//     name: "Alice",
+//     age: 18,
+//     lastMessage: "Kinda nothing, just playing Fortnite...",
+//     timestamp: "Now",
+//     avatarUrl: "https://placehold.co/100x100/EEDCFF/3D2C42?text=A",
+//     isOnline: true,
+//     unreadCount: 1,
+//   },
+//   {
+//     id: "2",
+//     name: "Male",
+//     age: 21,
+//     lastMessage: "typing...",
+//     timestamp: "2 min",
+//     avatarUrl: "https://placehold.co/100x100/FFD6A5/4B3F38?text=M",
+//     isOnline: false,
+//     unreadCount: 0,
+//   },
+//   {
+//     id: "3",
+//     name: "Craig",
+//     age: 22,
+//     lastMessage: "hyd",
+//     timestamp: "12:54 PM",
+//     avatarUrl: "https://placehold.co/100x100/D4E2D4/3A4F41?text=C",
+//     isOnline: false,
+//     unreadCount: 0,
+//   },
+//   {
+//     id: "4",
+//     name: "Jonelle",
+//     age: 19,
+//     lastMessage: "Photo",
+//     timestamp: "Yest.",
+//     avatarUrl: "https://placehold.co/100x100/FFC0CB/4D3B3E?text=J",
+//     isOnline: false,
+//     unreadCount: 1,
+//   },
+//   {
+//     id: "5",
+//     name: "Madelyn",
+//     age: 25,
+//     lastMessage: "Don't mess with me",
+//     timestamp: "Nov 1",
+//     avatarUrl: "https://placehold.co/100x100/B9F2D8/314A40?text=M",
+//     isOnline: false,
+//     unreadCount: 0,
+//   },
+// ];
+
+// export default function AllChatsScreen() {
+//   const navigation = useNavigation<any>();
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <View style={styles.header}>
+//         <Text style={styles.headerTitle}>Chats</Text>
+//       </View>
+//       <FlatList
+//         data={DUMMY_CHATS}
+//         keyExtractor={(item) => item.id}
+//         renderItem={({ item }) => (
+//           <TouchableOpacity
+//             style={styles.chatItem}
+//             onPress={() =>
+//               navigation.navigate("Chat", {
+//                 contactId: item.id,
+//                 contactName: item.name,
+//               })
+//             }
+//           >
+//             <View style={styles.avatarContainer}>
+//               <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
+//               {item.isOnline && <View style={styles.onlineIndicator} />}
+//             </View>
+//             <View style={styles.chatInfo}>
+//               <View style={styles.nameRow}>
+//                 <Text style={styles.chatName}>{item.name},</Text>
+//                 <Text style={styles.chatAge}>{item.age}</Text>
+//               </View>
+//               <Text
+//                 style={[
+//                   styles.lastMessage,
+//                   item.lastMessage === "typing..." && styles.typingText,
+//                 ]}
+//                 numberOfLines={1}
+//               >
+//                 {item.lastMessage}
+//               </Text>
+//             </View>
+//             <View style={styles.metaInfo}>
+//               <Text style={styles.timestamp}>{item.timestamp}</Text>
+//               {item.unreadCount > 0 && (
+//                 <View style={styles.unreadBadge}>
+//                   <Text style={styles.unreadBadgeText}>{item.unreadCount}</Text>
+//                 </View>
+//               )}
+//             </View>
+//           </TouchableOpacity>
+//         )}
+//       />
+//     </SafeAreaView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#12082A", // Dark purple background
+//   },
+//   header: {
+//     padding: 16,
+//     alignItems: "center",
+//     color: "#FFFFFF",
+//     backgroundColor: "#1F1A3D", // Slightly lighter purple for header
+//     marginTop: 5,
+//   },
+//   headerTitle: {
+//     fontSize: 20,
+//     fontWeight: "bold",
+//     color: "#FFFFFF",
+//   },
+//   chatItem: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     paddingHorizontal: 16,
+//     paddingVertical: 12,
+//   },
+//   avatarContainer: {
+//     position: "relative",
+//   },
+//   avatar: {
+//     width: 54,
+//     height: 54,
+//     borderRadius: 27,
+//   },
+//   onlineIndicator: {
+//     width: 14,
+//     height: 14,
+//     borderRadius: 7,
+//     backgroundColor: "#34C759", // Bright green
+//     position: "absolute",
+//     top: 0,
+//     left: 0,
+//     borderWidth: 2,
+//     borderColor: "#12082A",
+//   },
+//   chatInfo: {
+//     flex: 1,
+//     marginLeft: 12,
+//   },
+//   nameRow: {
+//     flexDirection: "row",
+//     alignItems: "baseline",
+//   },
+//   chatName: {
+//     fontSize: 17,
+//     fontWeight: "600",
+//     color: "#FFFFFF",
+//   },
+//   chatAge: {
+//     fontSize: 17,
+//     color: "#FFFFFF",
+//     marginLeft: 4,
+//   },
+//   lastMessage: {
+//     fontSize: 15,
+//     color: "#A09BAC", // Light gray for message
+//     marginTop: 4,
+//   },
+//   typingText: {
+//     color: "#4A90E2", // Blue for 'typing...'
+//     fontStyle: "italic",
+//   },
+//   metaInfo: {
+//     alignItems: "flex-end",
+//   },
+//   timestamp: {
+//     fontSize: 13,
+//     color: "#A09BAC",
+//     marginBottom: 8,
+//   },
+//   unreadBadge: {
+//     backgroundColor: "#4A90E2", // Blue badge
+//     width: 20,
+//     height: 20,
+//     borderRadius: 10,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   unreadBadgeText: {
+//     color: "#FFFFFF",
+//     fontSize: 12,
+//     fontWeight: "bold",
+//   },
+// });
+
+
+
+
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
-  Image,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import { useAuth } from "../contexts/AuthContext";
+import { getContacts } from "../lib/api"; // Import from your new api file
+import ChatListItem from "../components/ChatListItem"; // Import the new component
 
-// Dummy data to match the design in the image
-const DUMMY_CHATS = [
-  {
-    id: "1",
-    name: "Alice",
-    age: 18,
-    lastMessage: "Kinda nothing, just playing Fortnite...",
-    timestamp: "Now",
-    avatarUrl: "https://placehold.co/100x100/EEDCFF/3D2C42?text=A",
-    isOnline: true,
-    unreadCount: 1,
-  },
-  {
-    id: "2",
-    name: "Male",
-    age: 21,
-    lastMessage: "typing...",
-    timestamp: "2 min",
-    avatarUrl: "https://placehold.co/100x100/FFD6A5/4B3F38?text=M",
-    isOnline: false,
-    unreadCount: 0,
-  },
-  {
-    id: "3",
-    name: "Craig",
-    age: 22,
-    lastMessage: "hyd",
-    timestamp: "12:54 PM",
-    avatarUrl: "https://placehold.co/100x100/D4E2D4/3A4F41?text=C",
-    isOnline: false,
-    unreadCount: 0,
-  },
-  {
-    id: "4",
-    name: "Jonelle",
-    age: 19,
-    lastMessage: "Photo",
-    timestamp: "Yest.",
-    avatarUrl: "https://placehold.co/100x100/FFC0CB/4D3B3E?text=J",
-    isOnline: false,
-    unreadCount: 1,
-  },
-  {
-    id: "5",
-    name: "Madelyn",
-    age: 25,
-    lastMessage: "Don't mess with me",
-    timestamp: "Nov 1",
-    avatarUrl: "https://placehold.co/100x100/B9F2D8/314A40?text=M",
-    isOnline: false,
-    unreadCount: 0,
-  },
-];
+// Define an interface for the contact object
+interface Contact {
+  contactid: string;
+  userid: string;
+  contactuserid: string;
+  nickname: string | null;
+  blocked: boolean;
+}
 
 export default function AllChatsScreen() {
-  const navigation = useNavigation<any>();
+  const { session } = useAuth();
+  const isFocused = useIsFocused();
+  // Provide the Contact type to the useState hook
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isFocused && session) {
+      const fetchUserContacts = async () => {
+        setLoading(true);
+        const userContacts = await getContacts();
+        setContacts(userContacts);
+        setLoading(false);
+      };
+      fetchUserContacts();
+    }
+  }, [isFocused, session]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -313,47 +515,17 @@ export default function AllChatsScreen() {
         <Text style={styles.headerTitle}>Chats</Text>
       </View>
       <FlatList
-        data={DUMMY_CHATS}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.chatItem}
-            onPress={() =>
-              navigation.navigate("Chat", {
-                contactId: item.id,
-                contactName: item.name,
-              })
-            }
-          >
-            <View style={styles.avatarContainer}>
-              <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
-              {item.isOnline && <View style={styles.onlineIndicator} />}
-            </View>
-            <View style={styles.chatInfo}>
-              <View style={styles.nameRow}>
-                <Text style={styles.chatName}>{item.name},</Text>
-                <Text style={styles.chatAge}>{item.age}</Text>
-              </View>
-              <Text
-                style={[
-                  styles.lastMessage,
-                  item.lastMessage === "typing..." && styles.typingText,
-                ]}
-                numberOfLines={1}
-              >
-                {item.lastMessage}
-              </Text>
-            </View>
-            <View style={styles.metaInfo}>
-              <Text style={styles.timestamp}>{item.timestamp}</Text>
-              {item.unreadCount > 0 && (
-                <View style={styles.unreadBadge}>
-                  <Text style={styles.unreadBadgeText}>{item.unreadCount}</Text>
-                </View>
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
+        data={contacts}
+        keyExtractor={(item) => item.contactid}
+        renderItem={({ item }) => <ChatListItem contact={item} />}
+        ListEmptyComponent={
+          <View style={styles.centered}>
+            <Text style={styles.emptyText}>No Chats Found</Text>
+            <Text style={styles.emptySubText}>
+              Add contacts to see them here.
+            </Text>
+          </View>
+        }
       />
     </SafeAreaView>
   );
@@ -364,89 +536,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#12082A", // Dark purple background
   },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   header: {
     padding: 16,
     alignItems: "center",
-    color: "#FFFFFF",
-    backgroundColor: "#1F1A3D", // Slightly lighter purple for header
-    marginTop: 5,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#FFFFFF",
   },
-  chatItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  avatarContainer: {
-    position: "relative",
-  },
-  avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-  },
-  onlineIndicator: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#34C759", // Bright green
-    position: "absolute",
-    top: 0,
-    left: 0,
-    borderWidth: 2,
-    borderColor: "#12082A",
-  },
-  chatInfo: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-  chatName: {
-    fontSize: 17,
+  emptyText: {
+    fontSize: 18,
+    color: "#FFFFFF",
     fontWeight: "600",
-    color: "#FFFFFF",
   },
-  chatAge: {
-    fontSize: 17,
-    color: "#FFFFFF",
-    marginLeft: 4,
-  },
-  lastMessage: {
-    fontSize: 15,
-    color: "#A09BAC", // Light gray for message
-    marginTop: 4,
-  },
-  typingText: {
-    color: "#4A90E2", // Blue for 'typing...'
-    fontStyle: "italic",
-  },
-  metaInfo: {
-    alignItems: "flex-end",
-  },
-  timestamp: {
-    fontSize: 13,
+  emptySubText: {
+    fontSize: 14,
     color: "#A09BAC",
-    marginBottom: 8,
-  },
-  unreadBadge: {
-    backgroundColor: "#4A90E2", // Blue badge
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  unreadBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "bold",
+    marginTop: 8,
   },
 });
