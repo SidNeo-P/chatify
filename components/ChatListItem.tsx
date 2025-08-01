@@ -1,141 +1,175 @@
+//
+
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  ActivityIndicator,
-} from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { getUserById } from "../lib/api"; // Corrected path
 import { useNavigation } from "@react-navigation/native";
-import { getUserById } from "../lib/api"; // Import the new api function
+import { NavigationProps } from "../types/navigation"; // Import the navigation type
 
-// Define an interface for the contact prop, matching the one in AllChatsScreen
-interface Contact {
-  contactid: string;
-  userid: string;
-  contactuserid: string;
-  nickname: string | null;
-  blocked: boolean;
-}
+// Type for the contact prop
+type Contact = {
+  ContactID: string; // UUID
+  UserID: string; // UUID
+  ContactUserID: string; // UUID
+  Nickname?: string; // Optional
+  Blocked?: boolean; // Optional
+};
 
-// Define an interface for the user object fetched from the 'users' table
-interface User {
-  userid: string;
-  username: string;
-  profilepicture: string | null;
-  // Add other user fields if needed
-}
+// Type for the userData state
+type User = {
+  UserID: string; // UUID
+  PhoneNumber: string;
+  Username: string;
+  ProfilePicture?: string; // Optional
+  Status?: string; // Optional
+  LastSeen?: string; // Optional, timestamp
+};
 
-// Apply the Contact type to the component's props
-export default function ChatListItem({ contact }: { contact: Contact }) {
-  const navigation = useNavigation<any>();
-  // Apply the User type to the useState hook
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+type ChatListItemProps = {
+  contact: Contact;
+};
+
+// export default function ChatListItem({ contact }) {
+//   const navigation = useNavigation();
+//   const [userData, setUserData] = useState(null);
+
+//   useEffect(() => {
+//     const fetchUserData = async () => {
+//       if (!contact?.contactuserid) return;
+//       try {
+//         const data = await getUserById(contact.contactuserid);
+//         setUserData(data);
+//       } catch (error) {
+//         console.error("Error fetching user data in ChatListItem:", error);
+//       }
+//     };
+//     fetchUserData();
+//   }, [contact]);
+
+//   return (
+//     <TouchableOpacity
+//       style={styles.mainView}
+//       onPress={() => {
+//         navigation.navigate("Chat", { userId: contact.contactuserid });
+//       }}
+//     >
+//       <Image
+//         source={{
+//           uri:
+//             userData?.profilepicture ||
+//             "https://placehold.co/100x100/EEDCFF/3D2C42?text=A", // Fallback
+//         }}
+//         style={styles.avatar}
+//       />
+//       <View style={styles.textContainer}>
+//         <Text style={styles.username}>
+//           {contact.nickname || userData?.username}
+//         </Text>
+//         <Text style={styles.lastMessage} numberOfLines={1} ellipsizeMode="tail">
+//           Lorem ipsum dolor sit amet...
+//         </Text>
+//       </View>
+//     </TouchableOpacity>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   mainView: {
+//     width: "100%",
+//     flexDirection: "row",
+//     alignItems: "center",
+//     gap: 12.5,
+//     paddingVertical: 8,
+//   },
+//   avatar: {
+//     borderRadius: 50,
+//     width: 56,
+//     height: 56,
+//   },
+//   textContainer: {
+//     flex: 1,
+//     overflow: "hidden",
+//     gap: 1.5,
+//   },
+//   username: {
+//     fontWeight: "600",
+//     fontSize: 16,
+//   },
+//   lastMessage: {
+//     color: "gray",
+//   },
+// });
+
+export default function ChatListItem({ contact }: ChatListItemProps) {
+  const navigation = useNavigation<NavigationProps>(); // Use the navigation type
+  const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!contact?.contactuserid) return;
-
-      setLoading(true);
+      if (!contact?.ContactUserID) return;
       try {
-        const userData = await getUserById(contact.contactuserid);
-        setUser(userData);
+        const data = await getUserById(contact.ContactUserID);
+        console.log("Fetched userData:", data); // <-- SEE WHAT'S INSIDE
+        setUserData(data);
       } catch (error) {
-        console.error("Failed to fetch user data in ChatListItem:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching user data in ChatListItem:", error);
       }
     };
-
     fetchUserData();
   }, [contact]);
-
-  if (loading) {
-    // You can return a simple loader or a placeholder view
-    return (
-      <View style={styles.chatItem}>
-        <ActivityIndicator size="small" color="#FFFFFF" />
-      </View>
-    );
-  }
-
-  if (!user) {
-    // Don't render anything if the contact's user data couldn't be fetched
-    return null;
-  }
+  console.log("User Data:");
 
   return (
     <TouchableOpacity
-      style={styles.chatItem}
-      onPress={() =>
-        navigation.navigate("Chat", {
-          contactId: user.userid,
-          contactName: contact.nickname || user.username,
-        })
-      }
+      style={styles.mainView}
+      onPress={() => {
+        navigation.navigate("Chat", { userId: contact.ContactUserID }); // Type-safe navigation
+      }}
     >
-      <View style={styles.avatarContainer}>
-        <Image
-          source={
-            user.profilepicture
-              ? { uri: user.profilepicture }
-              : require("../assets/chatapp.webp") // A default placeholder image
-          }
-          style={styles.avatar}
-        />
-        {/* You can add online indicator logic here later */}
-      </View>
-      <View style={styles.chatInfo}>
-        <Text style={styles.chatName}>{contact.nickname || user.username}</Text>
-        <Text style={styles.lastMessage} numberOfLines={1}>
-          Tap to start chatting...
+      <Image
+        source={{
+          uri:
+            userData?.ProfilePicture ||
+            "https://placehold.co/100x100/EEDCFF/3D2C42?text=A",
+        }}
+        style={styles.avatar}
+      />
+      <View style={styles.textContainer}>
+        <Text style={styles.username}>
+          {contact.Nickname || userData?.Username || "Unknown"}
         </Text>
-      </View>
-      <View style={styles.metaInfo}>
-        <Text style={styles.timestamp}>Yest.</Text>
-        {/* You can add unread badge logic here later */}
+        <Text style={styles.lastMessage} numberOfLines={1} ellipsizeMode="tail">
+          Lorem ipsum dolor sit amet...
+        </Text>
       </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  chatItem: {
+  mainView: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  avatarContainer: {
-    position: "relative",
+    gap: 12.5,
+    paddingVertical: 8,
   },
   avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    borderRadius: 50,
+    width: 56,
+    height: 56,
   },
-  chatInfo: {
+  textContainer: {
     flex: 1,
-    marginLeft: 12,
+    overflow: "hidden",
+    gap: 1.5,
   },
-  chatName: {
-    fontSize: 17,
+  username: {
     fontWeight: "600",
-    color: "#FFFFFF",
+    fontSize: 16,
+    color: "#3D2C42", // Dark color for better contrast
   },
   lastMessage: {
-    fontSize: 15,
-    color: "#A09BAC",
-    marginTop: 4,
-  },
-  metaInfo: {
-    alignItems: "flex-end",
-  },
-  timestamp: {
-    fontSize: 13,
-    color: "#A09BAC",
-    marginBottom: 8,
+    color: "gray",
   },
 });
