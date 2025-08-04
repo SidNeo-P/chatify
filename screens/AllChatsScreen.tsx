@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -7,6 +6,8 @@ import {
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
+  StatusBar,
+  Platform,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../contexts/AuthContext";
@@ -17,8 +18,8 @@ type Contact = {
   ContactID: string; // UUID
   UserID: string; // UUID
   ContactUserID: string; // UUID
-  Nickname?: string; // Optional
-  Blocked?: boolean; // Optional
+  Nickname?: string;
+  Blocked?: boolean;
 };
 
 export default function AllChatsScreen() {
@@ -54,9 +55,20 @@ export default function AllChatsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Custom Status Bar */}
+      <StatusBar
+        backgroundColor="#30234a"
+        barStyle="light-content"
+        translucent={true} // allows header to go behind status bar
+      />
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Chats</Text>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Chats</Text>
+        </View>
       </View>
+
+      {/* List */}
       <FlatList
         data={contacts}
         keyExtractor={(item) => item.ContactID}
@@ -72,33 +84,11 @@ export default function AllChatsScreen() {
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#12082A", // Dark purple background
-//   },
-//   centered: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   header: {
-//     padding: 16,
-//     alignItems: "flex-start",
-//   },
-//   headerTitle: {
-//     fontSize: 32,
-//     fontWeight: "bold",
-//   },
-//   emptyText: {
-//     fontSize: 16,
-//     color: "gray",
-//   },
-// });
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#12082A", // Dark purple background from image
+    top: 0,
   },
   centered: {
     flex: 1,
@@ -111,16 +101,16 @@ const styles = StyleSheet.create({
     alignItems: "center", // Center the title
     borderBottomWidth: 1,
     borderBottomColor: "#2A1B4D", // A slightly lighter border
-    backgroundColor:"#30234a",
-    top:0,
-    height:70,
+    backgroundColor: "#30234a",
+    top: 0,
+    height: 70,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#FFFFFF",
-    alignItems:"center",
-    textAlign:"center"
+    alignItems: "center",
+    textAlign: "center",
   },
   emptyText: {
     fontSize: 18,
@@ -131,5 +121,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#A09BAC",
     marginTop: 8,
+  },
+  headerTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 10,
   },
 });

@@ -119,7 +119,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigation } from "@react-navigation/native"; // ✅ Import useNavigation
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../types/navigation"; // ✅ Import your stack types
+import { StackParamList } from "../types/Alltypes"; // ✅ Import your stack types
 import Ionicons from "react-native-vector-icons/Ionicons"; // ✅ Import an icon library
 
 // ✅ Define the navigation prop type for this screen

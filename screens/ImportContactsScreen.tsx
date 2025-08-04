@@ -260,7 +260,7 @@ import {
   StyleSheet,
   TextInput, // ✅ Import TextInput
 } from "react-native";
-import { getDeviceContacts, uploadContactsToSupabase } from "../lib/contacts";
+import { getDeviceContacts, uploadContactsToSupabase } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 

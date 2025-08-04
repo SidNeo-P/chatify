@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { getUserById } from "../lib/api"; // Corrected path
 import { useNavigation } from "@react-navigation/native";
-import { NavigationProps } from "../types/navigation"; // Import the navigation type
+import { NavigationProps } from "../types/Alltypes"; // Import the navigation type
 
 // Type for the contact prop
 type Contact = {
@@ -52,9 +52,9 @@ export default function ChatListItem({ contact }: ChatListItemProps) {
     <TouchableOpacity
       style={styles.mainView}
       onPress={() => {
-        navigation.navigate("Chat", { 
+        navigation.navigate("Chat", {
           userId: contact.ContactUserID,
-          username: contact.Nickname || userData?.username || "Unknown"
+          username: contact.Nickname || userData?.username || "Unknown",
         }); // Pass both userId and username
       }}
     >
@@ -71,7 +71,7 @@ export default function ChatListItem({ contact }: ChatListItemProps) {
           {contact.Nickname || userData?.username || "Unknown"}
         </Text>
         <Text style={styles.lastMessage} numberOfLines={1} ellipsizeMode="tail">
-          Lorem ipsum dolor sit amet...
+          hii
         </Text>
       </View>
     </TouchableOpacity>
@@ -105,4 +105,3 @@ const styles = StyleSheet.create({
     color: "gray",
   },
 });
-
