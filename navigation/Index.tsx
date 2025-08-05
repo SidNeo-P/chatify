@@ -31,6 +31,10 @@ function TabNavigator() {
           backgroundColor: "#30234a",
           borderTopWidth: 0,
           height: 80,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          paddingBottom: insets.bottom || 10, // Adjust padding based on safe area insets
+          position: "absolute",
         },
         tabBarItemStyle: {
           width: "100%",

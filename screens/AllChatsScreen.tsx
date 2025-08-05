@@ -13,6 +13,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../contexts/AuthContext";
 import { getContacts } from "../lib/api"; // Import from your new util file
 import ChatListItem from "../components/ChatListItem"; // Import the new component
+import { LinearGradient } from "expo-linear-gradient";
 
 type Contact = {
   ContactID: string; // UUID
@@ -69,17 +70,19 @@ export default function AllChatsScreen() {
       </View>
 
       {/* List */}
-      <FlatList
-        data={contacts}
-        keyExtractor={(item) => item.ContactID}
-        renderItem={({ item }) => <ChatListItem contact={item} />}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
-        ListEmptyComponent={
-          <View style={styles.centered}>
-            <Text style={styles.emptyText}>No Chats Found</Text>
-          </View>
-        }
-      />
+      <View style={[styles.body, { flex: 1 }]}>
+        <FlatList
+          data={contacts}
+          keyExtractor={(item) => item.ContactID}
+          renderItem={({ item }) => <ChatListItem contact={item} />}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          ListEmptyComponent={
+            <View style={styles.centered}>
+              <Text style={styles.emptyText}>No Chats Found</Text>
+            </View>
+          }
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -87,8 +90,16 @@ export default function AllChatsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#12082A", // Dark purple background from image
+    backgroundColor: "#30234a",
     top: 0,
+  },
+  body: {
+    flex: 1,
+    backgroundColor: "#12082A", // Dark purple background from image
+    // borderTopLeftRadius: 20,
+    // borderTopRightRadius: 20,
+    borderRadius: 20,
+    overflow: "hidden", // Ensures the border radius is applied correctly
   },
   centered: {
     flex: 1,
@@ -100,7 +111,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "center", // Center the title
     borderBottomWidth: 1,
-    borderBottomColor: "#2A1B4D", // A slightly lighter border
+    borderBottomColor: "#30234a", // Light gray border
     backgroundColor: "#30234a",
     top: 0,
     height: 70,
