@@ -11,9 +11,8 @@ import {
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../contexts/AuthContext";
-import { getContacts } from "../lib/api"; // Import from your new util file
-import ChatListItem from "../components/ChatListItem"; // Import the new component
-import { LinearGradient } from "expo-linear-gradient";
+import { getContacts } from "../lib/api";
+import ChatListItem from "../components/ChatListItem";
 
 type Contact = {
   ContactID: string; // UUID
@@ -60,7 +59,7 @@ export default function AllChatsScreen() {
       <StatusBar
         backgroundColor="#30234a"
         barStyle="light-content"
-        translucent={true} // allows header to go behind status bar
+        translucent={true}
       />
       {/* Header */}
       <View style={styles.header}>
@@ -95,11 +94,11 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    backgroundColor: "#12082A", // Dark purple background from image
+    backgroundColor: "#12082A",
     // borderTopLeftRadius: 20,
     // borderTopRightRadius: 20,
     borderRadius: 20,
-    overflow: "hidden", // Ensures the border radius is applied correctly
+    overflow: "hidden",
   },
   centered: {
     flex: 1,
@@ -109,9 +108,9 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 16,
     paddingHorizontal: 16,
-    alignItems: "center", // Center the title
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#30234a", // Light gray border
+    borderBottomColor: "#30234a",
     backgroundColor: "#30234a",
     top: 0,
     height: 70,

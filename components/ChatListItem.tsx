@@ -1,28 +1,25 @@
-//
-
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { getUserById } from "../lib/api"; // Corrected path
+import { getUserById } from "../lib/api";
 import { useNavigation } from "@react-navigation/native";
-import { NavigationProps } from "../types/Alltypes"; // Import the navigation type
+import { NavigationProps } from "../types/Alltypes";
 
 // Type for the contact prop
 type Contact = {
-  ContactID: string; // UUID
-  UserID: string; // UUID
-  ContactUserID: string; // UUID
-  Nickname?: string; // Optional
-  Blocked?: boolean; // Optional
+  ContactID: string;
+  UserID: string;
+  ContactUserID: string;
+  Nickname?: string;
+  Blocked?: boolean;
 };
 
-// Type for the userData state - updated to match database field names
 type User = {
-  userid: string; // UUID - lowercase to match database
+  userid: string; // UUID
   phonenumber: string;
   username: string;
-  profilepicture?: string; // Optional - lowercase to match database
-  status?: string; // Optional
-  lastseen?: string; // Optional, timestamp
+  profilepicture?: string;
+  status?: string;
+  lastseen?: string;
 };
 
 type ChatListItemProps = {
@@ -30,7 +27,7 @@ type ChatListItemProps = {
 };
 
 export default function ChatListItem({ contact }: ChatListItemProps) {
-  const navigation = useNavigation<NavigationProps>(); // Use the navigation type
+  const navigation = useNavigation<NavigationProps>();
   const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
@@ -38,7 +35,7 @@ export default function ChatListItem({ contact }: ChatListItemProps) {
       if (!contact?.ContactUserID) return;
       try {
         const data = await getUserById(contact.ContactUserID);
-        console.log("Fetched userData:", data); // <-- SEE WHAT'S INSIDE
+        console.log("Fetched userData:", data);
         setUserData(data);
       } catch (error) {
         console.error("Error fetching user data in ChatListItem:", error);
@@ -55,14 +52,14 @@ export default function ChatListItem({ contact }: ChatListItemProps) {
         navigation.navigate("Chat", {
           userId: contact.ContactUserID,
           username: contact.Nickname || userData?.username || "Unknown",
-        }); // Pass both userId and username
+        });
       }}
     >
       <Image
         source={
           userData?.profilepicture
             ? { uri: userData.profilepicture }
-            : require("../assets/gojoprofile.jpg") // Use require for local assets
+            : require("../assets/gojoprofile.jpg")
         }
         style={styles.avatar}
       />
@@ -99,7 +96,7 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: "600",
     fontSize: 16,
-    color: "#FFFFFF", // Dark color for better contrast
+    color: "#FFFFFF",
   },
   lastMessage: {
     color: "gray",

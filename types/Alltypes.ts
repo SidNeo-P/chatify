@@ -11,7 +11,7 @@ export type StackParamList = {
   Auth: undefined;
   // ✅ This now correctly types the Main route as a container for the Tab Navigator
   Main: NavigatorScreenParams<TabParamList>;
-  Chat: { userId: string; username?: string }; // Updated to include username
+  Chat: { userId: string; username: string }; // Updated to include username
   NewChat: undefined;
   ImportContacts: undefined;
 };

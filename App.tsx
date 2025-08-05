@@ -1,7 +1,7 @@
 import "react-native-url-polyfill/auto";
 import "react-native-gesture-handler";
 import Navigation from "./navigation/Index";
-import { AuthProvider } from "./contexts/AuthContext"; // adjust the path if needed
+import { AuthProvider } from "./contexts/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 

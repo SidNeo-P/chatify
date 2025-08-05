@@ -10,7 +10,6 @@ import { useAuth } from "../contexts/AuthContext";
 import Auth from "../components/Auth";
 import AllChatsScreen from "../screens/AllChatsScreen";
 import ChatScreen from "../screens/ChatScreen";
-import NewChatScreen from "../screens/NewChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ContactsScreen from "../screens/ContactsScreen";
 import ImportContactsScreen from "../screens/ImportContactsScreen";
@@ -113,7 +112,6 @@ export default function Navigation() {
               component={ChatScreen}
               options={{ statusBarHidden: true }}
             />
-            <Stack.Screen name="NewChat" component={NewChatScreen} />
             <Stack.Screen
               name="ImportContacts"
               component={ImportContactsScreen}
