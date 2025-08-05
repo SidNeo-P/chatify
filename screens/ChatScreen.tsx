@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Platform,
-  SafeAreaView,
   StatusBar,
   Keyboard,
   Dimensions,

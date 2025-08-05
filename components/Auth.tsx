@@ -5,11 +5,12 @@ import {
   View,
   Text,
   Image,
-  TextInputProps,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { Button, Input } from "@rneui/themed";
 import { FontAwesome } from "@expo/vector-icons";
+import { StatusBar } from "react-native";
+
 
 export default function Auth() {
   const [email, setEmail] = useState<string>("");
@@ -44,7 +45,10 @@ export default function Auth() {
   };
 
   return (
-    <View style={styles.container}>
+    
+    <>
+    <StatusBar hidden={true}/>
+       <View style={styles.container}>
       <Image
         source={require("../assets/chatapp.webp")}
         style={styles.image}
@@ -100,13 +104,18 @@ export default function Auth() {
         />
       </View>
     </View>
+    </>
+   
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    top:0,
+    marginTop: 0,
     padding: 12,
+    backgroundColor:"#12082A",
+    height:"100%"
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -120,18 +129,20 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 160,
     marginBottom: 15,
+    marginTop:20
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 4,
+    color:"#FFFFFF"
   },
   subtitle: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666",
     marginBottom: 24,
+    color:"#FFFFFF"
   },
   inputContainer: {
     backgroundColor: "#fff",
