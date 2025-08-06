@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
   },
   // ✅ Styles for the FAB
   fab: {
+    top: 20,
     position: "absolute",
     width: 56,
     height: 56,

@@ -24,12 +24,11 @@ interface ChatInputProps {
 export default function ChatInput({
   currentUserId,
   contactId,
-  isKeyboardVisible,
 }: ChatInputProps) {
   const [text, setText] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
-  // Helper function to convert file to base64
+  // Function to convert file to base64
   const convertFileToBase64 = async (fileUri: string) => {
     try {
       const base64String = await FileSystem.readAsStringAsync(fileUri, {
