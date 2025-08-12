@@ -1,245 +1,246 @@
-import React, { useEffect, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  StatusBar,
-  Keyboard,
-  Dimensions,
-} from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { StackParamList } from "../types/Alltypes";
-import { useAuth } from "../contexts/AuthContext";
-import { supabase } from "../lib/supabase";
-import { FlashList } from "@shopify/flash-list";
-import MessageBubble from "../components/MessageBubble";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ChatHeader from "../components/ChatHeader";
-import ChatInput from "../components/ChatInput";
+// import React, { useEffect, useState, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   Platform,
+//   StatusBar,
+//   Keyboard,
+//   Dimensions,
+// } from "react-native";
+// import { RouteProp, useRoute } from "@react-navigation/native";
+// import { StackParamList } from "../types/Alltypes";
+// import { useAuth } from "../contexts/AuthContext";
+// import { supabase } from "../lib/supabase";
+// import { FlashList } from "@shopify/flash-list";
+// import MessageBubble from "../components/MessageBubble";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+// import ChatHeader from "../components/ChatHeader";
+// import ChatInput from "../components/ChatInput";
 
-type Message = {
-  messageid: string;
-  senderid: string;
-  receiverid: string;
-  content?: string;
-  mediaurl?: string;
-  timestamp: string;
-  status?: string;
-};
+// type Message = {
+//   messageid: string;
+//   senderid: string;
+//   receiverid: string;
+//   content?: string;
+//   mediaurl?: string;
+//   timestamp: string;
+//   status?: string;
+//   text: string;
+// };
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+// const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function ChatScreen() {
-  const route = useRoute<RouteProp<StackParamList, "Chat">>();
-  const { userId: contactId, username } = route.params;
-  const { session } = useAuth();
-  const insets = useSafeAreaInsets();
+// export default function ChatScreen() {
+//   const route = useRoute<RouteProp<StackParamList, "Chat">>();
+//   const { userId: contactId, username } = route.params;
+//   const { session } = useAuth();
+//   const insets = useSafeAreaInsets();
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const listRef = useRef<FlashList<Message>>(null);
-  const currentUserId = session?.user?.id;
+//   const [messages, setMessages] = useState<Message[]>([]);
+//   const [keyboardHeight, setKeyboardHeight] = useState(0);
+//   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+//   const listRef = useRef<FlashList<Message>>(null);
+//   const currentUserId = session?.user?.id;
 
-  // Enhanced keyboard handling
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      (e) => {
-        setKeyboardHeight(e.endCoordinates.height);
-        setIsKeyboardVisible(true);
-      }
-    );
+//   // Enhanced keyboard handling
+//   useEffect(() => {
+//     const keyboardDidShowListener = Keyboard.addListener(
+//       "keyboardDidShow",
+//       (e) => {
+//         setKeyboardHeight(e.endCoordinates.height);
+//         setIsKeyboardVisible(true);
+//       }
+//     );
 
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardHeight(0);
-        setIsKeyboardVisible(false);
-      }
-    );
+//     const keyboardDidHideListener = Keyboard.addListener(
+//       "keyboardDidHide",
+//       () => {
+//         setKeyboardHeight(0);
+//         setIsKeyboardVisible(false);
+//       }
+//     );
 
-    const keyboardWillShowListener = Keyboard.addListener(
-      "keyboardWillShow",
-      (e) => {
-        if (Platform.OS === "ios") {
-          setKeyboardHeight(e.endCoordinates.height);
-          setIsKeyboardVisible(true);
-        }
-      }
-    );
+//     const keyboardWillShowListener = Keyboard.addListener(
+//       "keyboardWillShow",
+//       (e) => {
+//         if (Platform.OS === "ios") {
+//           setKeyboardHeight(e.endCoordinates.height);
+//           setIsKeyboardVisible(true);
+//         }
+//       }
+//     );
 
-    const keyboardWillHideListener = Keyboard.addListener(
-      "keyboardWillHide",
-      () => {
-        if (Platform.OS === "ios") {
-          setKeyboardHeight(0);
-          setIsKeyboardVisible(false);
-        }
-      }
-    );
+//     const keyboardWillHideListener = Keyboard.addListener(
+//       "keyboardWillHide",
+//       () => {
+//         if (Platform.OS === "ios") {
+//           setKeyboardHeight(0);
+//           setIsKeyboardVisible(false);
+//         }
+//       }
+//     );
 
-    return () => {
-      keyboardDidShowListener?.remove();
-      keyboardDidHideListener?.remove();
-      keyboardWillShowListener?.remove();
-      keyboardWillHideListener?.remove();
-    };
-  }, []);
+//     return () => {
+//       keyboardDidShowListener?.remove();
+//       keyboardDidHideListener?.remove();
+//       keyboardWillShowListener?.remove();
+//       keyboardWillHideListener?.remove();
+//     };
+//   }, []);
 
-  // Real-time message subscription
-  useEffect(() => {
-    const channel = supabase
-      .channel(`chat:${currentUserId}:${contactId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "messages",
-        },
-        (payload) => {
-          console.log("Message change detected:", payload);
+//   // Real-time message subscription
+//   useEffect(() => {
+//     const channel = supabase
+//       .channel(`chat:${currentUserId}:${contactId}`)
+//       .on(
+//         "postgres_changes",
+//         {
+//           event: "*",
+//           schema: "public",
+//           table: "messages",
+//         },
+//         (payload) => {
+//           console.log("Message change detected:", payload);
 
-          switch (payload.eventType) {
-            case "INSERT":
-              setMessages((prev) => [...prev, payload.new as Message]);
-              break;
-            case "UPDATE":
-              setMessages((prev) =>
-                prev.map((msg) =>
-                  msg.messageid === payload.new.messageid
-                    ? (payload.new as Message)
-                    : msg
-                )
-              );
-              break;
-            case "DELETE":
-              setMessages((prev) =>
-                prev.filter((msg) => msg.messageid !== payload.old.messageid)
-              );
-              break;
-          }
-        }
-      )
-      .subscribe();
+//           switch (payload.eventType) {
+//             case "INSERT":
+//               setMessages((prev) => [...prev, payload.new as Message]);
+//               break;
+//             case "UPDATE":
+//               setMessages((prev) =>
+//                 prev.map((msg) =>
+//                   msg.messageid === payload.new.messageid
+//                     ? (payload.new as Message)
+//                     : msg
+//                 )
+//               );
+//               break;
+//             case "DELETE":
+//               setMessages((prev) =>
+//                 prev.filter((msg) => msg.messageid !== payload.old.messageid)
+//               );
+//               break;
+//           }
+//         }
+//       )
+//       .subscribe();
 
-    const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .in("senderid", [currentUserId, contactId])
-        .in("receiverid", [currentUserId, contactId])
-        .order("timestamp", { ascending: true });
+//     const fetchMessages = async () => {
+//       const { data, error } = await supabase
+//         .from("messages")
+//         .select("*")
+//         .in("senderid", [currentUserId, contactId])
+//         .in("receiverid", [currentUserId, contactId])
+//         .order("timestamp", { ascending: true });
 
-      if (error) {
-        console.error("Error fetching messages:", error);
-        return;
-      }
+//       if (error) {
+//         console.error("Error fetching messages:", error);
+//         return;
+//       }
 
-      setMessages(data || []);
-    };
+//       setMessages(data || []);
+//     };
 
-    fetchMessages();
+//     fetchMessages();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [currentUserId, contactId]);
+//     return () => {
+//       supabase.removeChannel(channel);
+//     };
+//   }, [currentUserId, contactId]);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    if (messages.length > 0) {
-      setTimeout(() => {
-        listRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }
-  }, [messages]);
+//   // Auto-scroll to bottom when new messages arrive
+//   useEffect(() => {
+//     if (messages.length > 0) {
+//       setTimeout(() => {
+//         listRef.current?.scrollToEnd({ animated: true });
+//       }, 100);
+//     }
+//   }, [messages]);
 
-  // Calculate dynamic container height
-  const getContainerStyle = () => {
-    const baseHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
+//   // Calculate dynamic container height
+//   const getContainerStyle = () => {
+//     const baseHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
 
-    if (Platform.OS === "android" && isKeyboardVisible) {
-      return {
-        ...styles.container,
-        height: baseHeight - keyboardHeight,
-      };
-    }
+//     if (Platform.OS === "android" && isKeyboardVisible) {
+//       return {
+//         ...styles.container,
+//         height: baseHeight - keyboardHeight,
+//       };
+//     }
 
-    return styles.container;
-  };
+//     return styles.container;
+//   };
 
-  return (
-    <View style={getContainerStyle()}>
-      <StatusBar barStyle="light-content" backgroundColor="#1F1A3D" />
+//   return (
+//     <View style={getContainerStyle()}>
+//       <StatusBar barStyle="light-content" backgroundColor="#1F1A3D" />
 
-      {/* Header Component */}
-      <ChatHeader username={username} />
+//       {/* Header Component */}
+//       <ChatHeader username={username} />
 
-      {/* Messages Container */}
-      <View style={styles.messagesContainer}>
-        {messages.length === 0 ? (
-          <View style={styles.noMessagesContainer}>
-            <Text style={styles.noMessagesText}>No Messages</Text>
-          </View>
-        ) : (
-          <FlashList
-            ref={listRef}
-            contentContainerStyle={styles.listContent}
-            data={messages}
-            renderItem={({ item }) => (
-              <MessageBubble message={item} currentUserId={currentUserId} />
-            )}
-            keyExtractor={(item) => item.messageid.toString()}
-            showsVerticalScrollIndicator={false}
-            estimatedItemSize={60}
-            keyboardShouldPersistTaps="handled"
-          />
-        )}
-      </View>
+//       {/* Messages Container */}
+//       <View style={styles.messagesContainer}>
+//         {messages.length === 0 ? (
+//           <View style={styles.noMessagesContainer}>
+//             <Text style={styles.noMessagesText}>No Messages</Text>
+//           </View>
+//         ) : (
+//           <FlashList
+//             ref={listRef}
+//             contentContainerStyle={styles.listContent}
+//             data={messages}
+//             renderItem={({ item }) => (
+//               <MessageBubble message={item} currentUserId={currentUserId} />
+//             )}
+//             keyExtractor={(item) => item.messageid.toString()}
+//             showsVerticalScrollIndicator={false}
+//             estimatedItemSize={60}
+//             keyboardShouldPersistTaps="handled"
+//           />
+//         )}
+//       </View>
 
-      {/* Input Component */}
-      <ChatInput
-        currentUserId={currentUserId!}
-        contactId={contactId}
-        isKeyboardVisible={isKeyboardVisible}
-      />
+//       {/* Input Component */}
+//       <ChatInput
+//         currentUserId={currentUserId!}
+//         contactId={contactId}
+//         isKeyboardVisible={isKeyboardVisible}
+//       />
 
-      {/* Custom Keyboard Spacer for Android */}
-      {Platform.OS === "android" && isKeyboardVisible && (
-        <View style={{ height: keyboardHeight }} />
-      )}
-    </View>
-  );
-}
+//       {/* Custom Keyboard Spacer for Android */}
+//       {Platform.OS === "android" && isKeyboardVisible && (
+//         <View style={{ height: keyboardHeight }} />
+//       )}
+//     </View>
+//   );
+// }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#12082A",
-  },
-  messagesContainer: {
-    flex: 1,
-    backgroundColor: "#12082A",
-  },
-  noMessagesContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#12082A",
-  },
-  noMessagesText: {
-    color: "#A09BAC",
-    fontSize: 16,
-  },
-  listContent: {
-    paddingVertical: 8,
-    backgroundColor: "#12082A",
-    paddingBottom: 20,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#12082A",
+//   },
+//   messagesContainer: {
+//     flex: 1,
+//     backgroundColor: "#12082A",
+//   },
+//   noMessagesContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "#12082A",
+//   },
+//   noMessagesText: {
+//     color: "#A09BAC",
+//     fontSize: 16,
+//   },
+//   listContent: {
+//     paddingVertical: 8,
+//     backgroundColor: "#12082A",
+//     paddingBottom: 20,
+//   },
+// });
 
 //old code
 
@@ -781,3 +782,294 @@ const styles = StyleSheet.create({
 //     fontSize: 16,
 //   },
 // });
+
+import React, { useEffect, useState, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  StatusBar,
+  Keyboard,
+  Dimensions,
+} from "react-native";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { StackParamList } from "../types/Alltypes";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
+import { FlashList } from "@shopify/flash-list";
+import MessageBubble from "../components/MessageBubble";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ChatHeader from "../components/ChatHeader";
+import ChatInput from "../components/ChatInput";
+
+type Message = {
+  messageid: string;
+  senderid: string;
+  receiverid: string;
+  content?: string;
+  mediaurl?: string;
+  timestamp: string;
+  status?: string;
+  text: string;
+};
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+export default function ChatScreen() {
+  const route = useRoute<RouteProp<StackParamList, "Chat">>();
+  const { userId: contactId, username } = route.params;
+  const { session } = useAuth();
+  const insets = useSafeAreaInsets();
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+
+  const listRef = useRef<FlashList<Message>>(null);
+  const currentUserId = session?.user?.id;
+
+  const broadcastChannelRef = useRef<any>(null);
+
+  // Enhanced keyboard handling
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+        setIsKeyboardVisible(true);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+        setIsKeyboardVisible(false);
+      }
+    );
+
+    const keyboardWillShowListener = Keyboard.addListener(
+      "keyboardWillShow",
+      (e) => {
+        if (Platform.OS === "ios") {
+          setKeyboardHeight(e.endCoordinates.height);
+          setIsKeyboardVisible(true);
+        }
+      }
+    );
+
+    const keyboardWillHideListener = Keyboard.addListener(
+      "keyboardWillHide",
+      () => {
+        if (Platform.OS === "ios") {
+          setKeyboardHeight(0);
+          setIsKeyboardVisible(false);
+        }
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+      keyboardWillShowListener?.remove();
+      keyboardWillHideListener?.remove();
+    };
+  }, []);
+
+  // Real-time message subscription (DB)
+  useEffect(() => {
+    const channel = supabase
+      .channel(`chat:${currentUserId}:${contactId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          console.log("Message change detected:", payload);
+
+          switch (payload.eventType) {
+            case "INSERT":
+              setMessages((prev) => [...prev, payload.new as Message]);
+              break;
+            case "UPDATE":
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.messageid === payload.new.messageid
+                    ? (payload.new as Message)
+                    : msg
+                )
+              );
+              break;
+            case "DELETE":
+              setMessages((prev) =>
+                prev.filter((msg) => msg.messageid !== payload.old.messageid)
+              );
+              break;
+          }
+        }
+      )
+      .subscribe();
+
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .in("senderid", [currentUserId, contactId])
+        .in("receiverid", [currentUserId, contactId])
+        .order("timestamp", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching messages:", error);
+        return;
+      }
+
+      setMessages(data || []);
+    };
+
+    fetchMessages();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUserId, contactId]);
+
+  // Realtime broadcast channel for typing indicator
+  useEffect(() => {
+    if (!currentUserId || !contactId) return;
+
+    const channelName =
+      currentUserId < contactId
+        ? `typing-${currentUserId}-${contactId}`
+        : `typing-${contactId}-${currentUserId}`;
+
+    const channel = supabase.channel(channelName, {
+      config: { broadcast: { self: false } },
+    });
+
+    channel.on("broadcast", { event: "typing" }, (payload) => {
+      if (payload.senderId !== currentUserId) {
+        setIsOtherTyping(payload.isTyping);
+      }
+    });
+
+    channel.subscribe();
+    broadcastChannelRef.current = channel;
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUserId, contactId]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        listRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
+  // Function for ChatInput to send typing events
+  const sendTypingStatus = (isTyping: boolean) => {
+    if (broadcastChannelRef.current) {
+      broadcastChannelRef.current.send({
+        type: "broadcast",
+        event: "typing",
+        payload: { senderId: currentUserId, isTyping },
+      });
+    }
+  };
+
+  // Dynamic height handling
+  const getContainerStyle = () => {
+    const baseHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
+
+    if (Platform.OS === "android" && isKeyboardVisible) {
+      return {
+        ...styles.container,
+        height: baseHeight - keyboardHeight,
+      };
+    }
+
+    return styles.container;
+  };
+
+  return (
+    <View style={getContainerStyle()}>
+      <StatusBar barStyle="light-content" backgroundColor="#1F1A3D" />
+
+      {/* Pass typing status to header */}
+      <ChatHeader
+        username={username}
+        isTyping={isOtherTyping}
+        contactId={contactId}
+      />
+
+      {/* Messages Container */}
+      <View style={styles.messagesContainer}>
+        {messages.length === 0 ? (
+          <View style={styles.noMessagesContainer}>
+            <Text style={styles.noMessagesText}>No Messages</Text>
+          </View>
+        ) : (
+          <FlashList
+            ref={listRef}
+            contentContainerStyle={styles.listContent}
+            data={messages}
+            renderItem={({ item }) => (
+              <MessageBubble message={item} currentUserId={currentUserId} />
+            )}
+            keyExtractor={(item) => item.messageid.toString()}
+            showsVerticalScrollIndicator={false}
+            estimatedItemSize={60}
+            keyboardShouldPersistTaps="handled"
+          />
+        )}
+      </View>
+
+      {/* Input Component with typing event hook */}
+      <ChatInput
+        currentUserId={currentUserId!}
+        contactId={contactId}
+        isKeyboardVisible={isKeyboardVisible}
+        onTyping={sendTypingStatus}
+      />
+
+      {/* Custom Keyboard Spacer for Android */}
+      {Platform.OS === "android" && isKeyboardVisible && (
+        <View style={{ height: keyboardHeight }} />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#12082A",
+  },
+  messagesContainer: {
+    flex: 1,
+    backgroundColor: "#12082A",
+  },
+  noMessagesContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#12082A",
+  },
+  noMessagesText: {
+    color: "#A09BAC",
+    fontSize: 16,
+  },
+  listContent: {
+    paddingVertical: 8,
+    backgroundColor: "#12082A",
+    paddingBottom: 20,
+  },
+});
