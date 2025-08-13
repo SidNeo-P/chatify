@@ -783,6 +783,298 @@
 //   },
 // });
 
+// import React, { useEffect, useState, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   Platform,
+//   StatusBar,
+//   Keyboard,
+//   Dimensions,
+// } from "react-native";
+// import { RouteProp, useRoute } from "@react-navigation/native";
+// import { StackParamList } from "../types/Alltypes";
+// import { useAuth } from "../contexts/AuthContext";
+// import { supabase } from "../lib/supabase";
+// import { FlashList } from "@shopify/flash-list";
+// import MessageBubble from "../components/MessageBubble";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+// import ChatHeader from "../components/ChatHeader";
+// import ChatInput from "../components/ChatInput";
+
+// type Message = {
+//   messageid: string;
+//   senderid: string;
+//   receiverid: string;
+//   content?: string;
+//   mediaurl?: string;
+//   timestamp: string;
+//   status?: string;
+//   text: string;
+// };
+
+// const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+// export default function ChatScreen() {
+//   const route = useRoute<RouteProp<StackParamList, "Chat">>();
+//   const { userId: contactId, username } = route.params;
+//   const { session } = useAuth();
+//   const insets = useSafeAreaInsets();
+
+//   const [messages, setMessages] = useState<Message[]>([]);
+//   const [keyboardHeight, setKeyboardHeight] = useState(0);
+//   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+//   const [isOtherTyping, setIsOtherTyping] = useState(false);
+
+//   const listRef = useRef<FlashList<Message>>(null);
+//   const currentUserId = session?.user?.id;
+
+//   const broadcastChannelRef = useRef<any>(null);
+
+//   // Enhanced keyboard handling
+//   useEffect(() => {
+//     const keyboardDidShowListener = Keyboard.addListener(
+//       "keyboardDidShow",
+//       (e) => {
+//         setKeyboardHeight(e.endCoordinates.height);
+//         setIsKeyboardVisible(true);
+//       }
+//     );
+
+//     const keyboardDidHideListener = Keyboard.addListener(
+//       "keyboardDidHide",
+//       () => {
+//         setKeyboardHeight(0);
+//         setIsKeyboardVisible(false);
+//       }
+//     );
+
+//     const keyboardWillShowListener = Keyboard.addListener(
+//       "keyboardWillShow",
+//       (e) => {
+//         if (Platform.OS === "ios") {
+//           setKeyboardHeight(e.endCoordinates.height);
+//           setIsKeyboardVisible(true);
+//         }
+//       }
+//     );
+
+//     const keyboardWillHideListener = Keyboard.addListener(
+//       "keyboardWillHide",
+//       () => {
+//         if (Platform.OS === "ios") {
+//           setKeyboardHeight(0);
+//           setIsKeyboardVisible(false);
+//         }
+//       }
+//     );
+
+//     return () => {
+//       keyboardDidShowListener?.remove();
+//       keyboardDidHideListener?.remove();
+//       keyboardWillShowListener?.remove();
+//       keyboardWillHideListener?.remove();
+//     };
+//   }, []);
+
+//   // Real-time message subscription (DB)
+//   useEffect(() => {
+//     const channel = supabase
+//       .channel(`chat:${currentUserId}:${contactId}`)
+//       .on(
+//         "postgres_changes",
+//         {
+//           event: "*",
+//           schema: "public",
+//           table: "messages",
+//         },
+//         (payload) => {
+//           console.log("Message change detected:", payload);
+
+//           switch (payload.eventType) {
+//             case "INSERT":
+//               setMessages((prev) => [...prev, payload.new as Message]);
+//               break;
+//             case "UPDATE":
+//               setMessages((prev) =>
+//                 prev.map((msg) =>
+//                   msg.messageid === payload.new.messageid
+//                     ? (payload.new as Message)
+//                     : msg
+//                 )
+//               );
+//               break;
+//             case "DELETE":
+//               setMessages((prev) =>
+//                 prev.filter((msg) => msg.messageid !== payload.old.messageid)
+//               );
+//               break;
+//           }
+//         }
+//       )
+//       .subscribe();
+
+//     const fetchMessages = async () => {
+//       const { data, error } = await supabase
+//         .from("messages")
+//         .select("*")
+//         .in("senderid", [currentUserId, contactId])
+//         .in("receiverid", [currentUserId, contactId])
+//         .order("timestamp", { ascending: true });
+
+//       if (error) {
+//         console.error("Error fetching messages:", error);
+//         return;
+//       }
+
+//       setMessages(data || []);
+//     };
+
+//     fetchMessages();
+
+//     return () => {
+//       supabase.removeChannel(channel);
+//     };
+//   }, [currentUserId, contactId]);
+
+//   // Realtime broadcast channel for typing indicator
+//   useEffect(() => {
+//     if (!currentUserId || !contactId) return;
+
+//     const channelName =
+//       currentUserId < contactId
+//         ? `typing-${currentUserId}-${contactId}`
+//         : `typing-${contactId}-${currentUserId}`;
+
+//     const channel = supabase.channel(channelName, {
+//       config: { broadcast: { self: false } },
+//     });
+
+//     channel.on("broadcast", { event: "typing" }, (payload) => {
+//       if (payload.senderId !== currentUserId) {
+//         setIsOtherTyping(payload.isTyping);
+//       }
+//     });
+
+//     channel.subscribe();
+//     broadcastChannelRef.current = channel;
+
+//     return () => {
+//       supabase.removeChannel(channel);
+//     };
+//   }, [currentUserId, contactId]);
+
+//   // Auto-scroll to bottom when new messages arrive
+//   useEffect(() => {
+//     if (messages.length > 0) {
+//       setTimeout(() => {
+//         listRef.current?.scrollToEnd({ animated: true });
+//       }, 100);
+//     }
+//   }, [messages]);
+
+//   // Function for ChatInput to send typing events
+//   const sendTypingStatus = (isTyping: boolean) => {
+//     if (broadcastChannelRef.current) {
+//       broadcastChannelRef.current.send({
+//         type: "broadcast",
+//         event: "typing",
+//         payload: { senderId: currentUserId, isTyping },
+//       });
+//     }
+//   };
+
+//   // Dynamic height handling
+//   const getContainerStyle = () => {
+//     const baseHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
+
+//     if (Platform.OS === "android" && isKeyboardVisible) {
+//       return {
+//         ...styles.container,
+//         height: baseHeight - keyboardHeight,
+//       };
+//     }
+
+//     return styles.container;
+//   };
+
+//   return (
+//     <View style={getContainerStyle()}>
+//       <StatusBar barStyle="light-content" backgroundColor="#1F1A3D" />
+
+//       {/* Pass typing status to header */}
+//       <ChatHeader
+//         username={username}
+//         isTyping={isOtherTyping}
+//         contactId={contactId}
+//       />
+
+//       {/* Messages Container */}
+//       <View style={styles.messagesContainer}>
+//         {messages.length === 0 ? (
+//           <View style={styles.noMessagesContainer}>
+//             <Text style={styles.noMessagesText}>No Messages</Text>
+//           </View>
+//         ) : (
+//           <FlashList
+//             ref={listRef}
+//             contentContainerStyle={styles.listContent}
+//             data={messages}
+//             renderItem={({ item }) => (
+//               <MessageBubble message={item} currentUserId={currentUserId} />
+//             )}
+//             keyExtractor={(item) => item.messageid.toString()}
+//             showsVerticalScrollIndicator={false}
+//             estimatedItemSize={60}
+//             keyboardShouldPersistTaps="handled"
+//           />
+//         )}
+//       </View>
+
+//       {/* Input Component with typing event hook */}
+//       <ChatInput
+//         currentUserId={currentUserId!}
+//         contactId={contactId}
+//         isKeyboardVisible={isKeyboardVisible}
+//         onTyping={sendTypingStatus}
+//       />
+
+//       {/* Custom Keyboard Spacer for Android */}
+//       {Platform.OS === "android" && isKeyboardVisible && (
+//         <View style={{ height: keyboardHeight }} />
+//       )}
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#12082A",
+//   },
+//   messagesContainer: {
+//     flex: 1,
+//     backgroundColor: "#12082A",
+//   },
+//   noMessagesContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "#12082A",
+//   },
+//   noMessagesText: {
+//     color: "#A09BAC",
+//     fontSize: 16,
+//   },
+//   listContent: {
+//     paddingVertical: 8,
+//     backgroundColor: "#12082A",
+//     paddingBottom: 20,
+//   },
+// });
+
+// Fixed ChatScreen.tsx
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -829,7 +1121,6 @@ export default function ChatScreen() {
 
   const listRef = useRef<FlashList<Message>>(null);
   const currentUserId = session?.user?.id;
-
   const broadcastChannelRef = useRef<any>(null);
 
   // Enhanced keyboard handling
@@ -938,29 +1229,46 @@ export default function ChatScreen() {
     };
   }, [currentUserId, contactId]);
 
-  // Realtime broadcast channel for typing indicator
+  // FIXED: Realtime broadcast channel for typing indicator
   useEffect(() => {
     if (!currentUserId || !contactId) return;
 
-    const channelName =
-      currentUserId < contactId
-        ? `typing-${currentUserId}-${contactId}`
-        : `typing-${contactId}-${currentUserId}`;
+    // FIXED: Create consistent channel name by sorting IDs
+    const sortedIds = [currentUserId, contactId].sort();
+    const channelName = `typing-${sortedIds[0]}-${sortedIds[1]}`;
+
+    console.log("🔧 Creating typing channel:", channelName);
 
     const channel = supabase.channel(channelName, {
-      config: { broadcast: { self: false } },
+      config: {
+        broadcast: {
+          self: false, // Don't receive own messages
+          ack: false, // Don't wait for acknowledgment
+        },
+      },
     });
 
+    // FIXED: Proper event handling
     channel.on("broadcast", { event: "typing" }, (payload) => {
-      if (payload.senderId !== currentUserId) {
-        setIsOtherTyping(payload.isTyping);
+      console.log("🔧 Received typing broadcast:", payload);
+
+      // FIXED: Access nested payload data correctly
+      const { senderId, isTyping } = payload.payload || {};
+
+      if (senderId && senderId !== currentUserId) {
+        console.log("🔧 Setting other typing to:", isTyping);
+        setIsOtherTyping(isTyping);
       }
     });
 
-    channel.subscribe();
+    channel.subscribe((status) => {
+      console.log("🔧 Typing channel subscription status:", status);
+    });
+
     broadcastChannelRef.current = channel;
 
     return () => {
+      console.log("🔧 Cleaning up typing channel");
       supabase.removeChannel(channel);
     };
   }, [currentUserId, contactId]);
@@ -974,14 +1282,25 @@ export default function ChatScreen() {
     }
   }, [messages]);
 
-  // Function for ChatInput to send typing events
+  // FIXED: Function for ChatInput to send typing events
   const sendTypingStatus = (isTyping: boolean) => {
+    console.log("🔧 ChatScreen: sendTypingStatus called with:", isTyping);
+
     if (broadcastChannelRef.current) {
-      broadcastChannelRef.current.send({
+      const payload = {
         type: "broadcast",
         event: "typing",
-        payload: { senderId: currentUserId, isTyping },
-      });
+        payload: {
+          senderId: currentUserId,
+          isTyping,
+        },
+      };
+
+      console.log("🔧 Broadcasting typing status:", payload);
+
+      broadcastChannelRef.current.send(payload);
+    } else {
+      console.log("🔧 No broadcast channel available");
     }
   };
 
