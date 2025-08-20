@@ -7,7 +7,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuth } from "./contexts/AuthContext";
 import { useEffect } from "react";
 import { setupPowerSync } from "./powersync/System";
-// import { useRealTimeSync } from "./hooks/useRealTimeSync";
 
 export default function App() {
   const { session } = useAuth();
@@ -17,7 +16,6 @@ export default function App() {
     setupPowerSync();
   }, []);
   console.log("App component rendered. ");
-  // useRealTimeSync();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
